@@ -1,79 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>15-Second Digital Doodle</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<title>Doodle Dream – 20s Challenge</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
   body {
     margin: 0;
-    font-family: system-ui, sans-serif;
-    background: #f2f2f2;
+    min-height: 100vh;
+    font-family: "Poppins", system-ui, sans-serif;
+    background: linear-gradient(135deg, #fceabb, #f8b500);
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   header {
-    background: #111;
-    color: #fff;
     width: 100%;
+    padding: 14px;
     text-align: center;
-    padding: 12px;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #ff512f, #dd2476);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   }
 
   .top-bar {
+    width: 340px;
     display: flex;
     justify-content: space-between;
-    width: 320px;
-    margin: 8px 0;
+    margin: 14px 0 6px;
     font-size: 14px;
+    color: #333;
   }
 
   #timer {
-    font-weight: bold;
-    color: #d32f2f;
+    font-weight: 700;
+    font-size: 18px;
+    color: #c62828;
   }
 
   canvas {
     background: #fff;
-    border: 3px solid #222;
-    border-radius: 14px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
     touch-action: none;
   }
 
   .controls {
-    margin-top: 10px;
+    margin-top: 12px;
+    width: 340px;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
     justify-content: center;
-    width: 320px;
   }
 
   .color {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    border: 2px solid #333;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
   }
 
   button {
-    padding: 8px 12px;
+    padding: 8px 14px;
+    border-radius: 18px;
     border: none;
-    border-radius: 8px;
-    background: #222;
-    color: white;
     font-size: 13px;
+    font-weight: 500;
+    background: linear-gradient(90deg, #36d1dc, #5b86e5);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+
+  button:active {
+    transform: scale(0.95);
   }
 
   footer {
-    margin: 10px;
+    margin: 14px;
     font-size: 12px;
-    color: #666;
+    color: #444;
     text-align: center;
   }
 </style>
@@ -81,68 +92,68 @@
 
 <body>
 
-<header>15-Second Digital Doodle 🎨</header>
+<header>Doodle Dream – 20 Second Challenge 🎨</header>
 
 <div class="top-bar">
-  <div id="prompt">Finish the doodle!</div>
-  <div id="timer">15s</div>
+  <div id="prompt">Finish the doodle your way!</div>
+  <div id="timer">20s</div>
 </div>
 
-<canvas id="canvas" width="320" height="420"></canvas>
+<canvas id="canvas" width="340" height="420"></canvas>
 
 <div class="controls">
   <!-- Colors -->
   <div class="color" style="background:#000" onclick="setColor('#000')"></div>
   <div class="color" style="background:#e53935" onclick="setColor('#e53935')"></div>
-  <div class="color" style="background:#1e88e5" onclick="setColor('#1e88e5')"></div>
+  <div class="color" style="background:#fb8c00" onclick="setColor('#fb8c00')"></div>
+  <div class="color" style="background:#fdd835" onclick="setColor('#fdd835')"></div>
   <div class="color" style="background:#43a047" onclick="setColor('#43a047')"></div>
-  <div class="color" style="background:#fbc02d" onclick="setColor('#fbc02d')"></div>
+  <div class="color" style="background:#1e88e5" onclick="setColor('#1e88e5')"></div>
+  <div class="color" style="background:#3949ab" onclick="setColor('#3949ab')"></div>
   <div class="color" style="background:#8e24aa" onclick="setColor('#8e24aa')"></div>
+  <div class="color" style="background:#ec407a" onclick="setColor('#ec407a')"></div>
+  <div class="color" style="background:#6d4c41" onclick="setColor('#6d4c41')"></div>
 
   <!-- Brushes -->
-  <button onclick="setBrush(4, 'round')">Normal</button>
-  <button onclick="setBrush(8, 'round')">Thick</button>
-  <button onclick="setBrush(4, 'square')">Dotted</button>
-
+  <button onclick="setBrush(4)">Normal</button>
+  <button onclick="setBrush(8)">Thick</button>
   <button onclick="nextKid()">Next Kid</button>
 </div>
 
-<footer>No scores • No pressure • Just create</footer>
+<footer>No scores • No pressure • Just creativity</footer>
 
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let drawing = false;
-let timeLeft = 15;
+let timeLeft = 20;
 let timerInterval;
 let canDraw = true;
-
-// Audio (beep)
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function beep() {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.frequency.value = 800;
-  osc.type = "sine";
-  gain.gain.value = 0.2;
-  osc.start();
-  osc.stop(audioCtx.currentTime + 0.15);
-}
 
 ctx.strokeStyle = "#000";
 ctx.lineWidth = 4;
 ctx.lineCap = "round";
 
+// Beep sound
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function beep() {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.frequency.value = 900;
+  gain.gain.value = 0.2;
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.12);
+}
+
 const prompts = [
   "Turn this into an animal",
-  "Make this something funny",
+  "Make it funny",
   "What does this become?",
-  "Complete it your way",
-  "Turn this into a dream"
+  "Complete the dream",
+  "Surprise us!"
 ];
 
 function randomPrompt() {
@@ -152,23 +163,21 @@ function randomPrompt() {
 
 function drawHalfDoodle() {
   ctx.beginPath();
-  ctx.moveTo(80, 220);
-  ctx.quadraticCurveTo(160, 120, 240, 220);
+  ctx.moveTo(90, 230);
+  ctx.quadraticCurveTo(170, 120, 250, 230);
   ctx.stroke();
 }
 
 function startTimer() {
   clearInterval(timerInterval);
-  timeLeft = 15;
+  timeLeft = 20;
   canDraw = true;
-  document.getElementById("timer").innerText = "15s";
+  document.getElementById("timer").innerText = "20s";
 
   timerInterval = setInterval(() => {
     timeLeft--;
     document.getElementById("timer").innerText = timeLeft + "s";
-
     if (timeLeft <= 3 && timeLeft > 0) beep();
-
     if (timeLeft === 0) {
       beep();
       clearInterval(timerInterval);
@@ -203,9 +212,8 @@ function setColor(c) {
   ctx.strokeStyle = c;
 }
 
-function setBrush(size, cap) {
+function setBrush(size) {
   ctx.lineWidth = size;
-  ctx.lineCap = cap;
 }
 
 function nextKid() {
